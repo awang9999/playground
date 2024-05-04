@@ -1,0 +1,84 @@
+* Disjoint Set Data Structure
+
+A disjoint set data structure (also called a Union-Find or Merge-Set data structure) is a data structure that stores a collection of disjoint (non-overlapping) sets.
+
+** Representation
+Each node in a disjoint-set forest consists of a pointer and some auxiliary information, either a size or a rank (but not both). The pointers are used to make parent pointer trees, where each node that is not the root of a tree points to its parent. To distinguish root nodes from others, their parent pointers have invalid values, such as a circular reference to the node or a sentinel value. Each tree represents a set stored in the forest, with the members of the set being the nodes in the tree. Root nodes provide set representatives: Two nodes are in the same set if and only if the roots of the trees containing the nodes are equal. 
+
+** Operations
+*** Make Set
+Pseudocode for ~MakeSet~ operation:
+
+#+begin_src 
+function MakeSet(x) is
+    if x is not already in the forest then
+        x.parent := x
+        x.size := 1     // if nodes store size
+        x.rank := 0     // if nodes store rank
+    end if
+end function  
+#+end_src
+
+This operation has a constant time complexity.
+
+*** Finding Set Representatives (Find)
+The ~Find~ operation works by following the chain of parent pointers from the query node ~x~ until the root node for a set representation has been found. This root node represents the set to which ~x~ belongs and may be ~x~ itself.
+
+The ~Find~ operation also presents an opportunity for improving the forest via path compression. Since every node visited on the way to the root node eventually points to the same root node, their parent pointers can be updated to point closer to the root node. This makes future ~Find~ operations faster and this update is necessary to attain the amortized performance guarantee.
+
+Pseudocode for ~Find~ operation:
+#+begin_src 
+function Find(x) is
+    root := x
+    while root.parent ≠ root do
+        root := root.parent
+    end while
+
+    // Second pass down the tree to update parent pointers
+    while x.parent ≠ root do
+        parent := x.parent
+        x.parent := root
+        x := parent
+    end while
+
+    return root
+end function  
+#+end_src
+This is a non-recursive implementation of ~Find~ with path compression. It can be replaced with a recursive version that can accomplish find and path compression in a single path at the cost of additional memory complexity.
+
+Other methods of amortizing the performance of ~Find~ include path splitting and path halving. Both strategies update the parent pointers to be closer to the root but may not update the parent pointers to point directly to the root.
+
+*** Merging Two Sets (Union)
+The operation ~Union(x, y)~ replaces the set containing ~x~ and the set containing ~y~ with their union. ~Union~ begins by using ~Find~ to determine the roots of the trees containing ~x~ and ~y~. If they are the same, then there is nothing more to be done. If they are different, the two trees must be merged by either setting the parent pointer of the root of ~x~ to the root of ~y~ or vice versa. The choice of which node becomes the parent has consequences for the complexity of future operations in the tree. For example, if the tree becomes excessively tall, ~Find~ operations will be more costly.
+
+Two ways to decide which node becomes the parent are by merging according to size or according to rank. Here, rank refers to an upper bound on the height of the tree beginning at that node. In both strategies, the goal is to ensure the merged tree does not become too deep.
+
+Pseudocode for Union by Rank:
+#+begin_src  
+function Union(x, y) is
+    // Replace nodes by roots
+    x := Find(x)
+    y := Find(y)
+
+    if x = y then
+        return  // x and y are already in the same set
+    end if
+
+    // If necessary, rename variables to ensure that
+    // x has rank at least as large as that of y
+    if x.rank < y.rank then
+        (x, y) := (y, x)
+    end if
+
+    // Make x the new root
+    y.parent := x
+    // If necessary, increment the rank of x
+    if x.rank = y.rank then
+        x.rank := x.rank + 1
+    end if
+end function
+#+end_src
+
+
+** Sources:
+- https://en.wikipedia.org/wiki/Disjoint-set_data_structure

@@ -1,0 +1,57 @@
+LEARN LITERATE PROGRAMMING -*- mode: org -*-
+
+#+begin_src emacs-lisp :tangle yes
+  (directory-files ".")
+#+end_src
+
+#+RESULTS:
+| . | .. | .git | .gitignore | README.md | learn_literate_programming.org | spoj |
+
+#+begin_src python
+  from os import listdir
+  return listdir(".")
+#+end_src
+
+#+RESULTS:
+| .gitignore | learn_literate_programming.org | README.md | spoj | .git |
+
+#+begin_src shell
+  ls
+#+end_src
+
+#+RESULTS:
+| learn_literate_programming.org |
+| README.md                      |
+| spoj                           |
+
+#+BEGIN_SRC sh :dir /home/zander/projects
+  ls
+#+END_SRC
+
+#+RESULTS:
+| bert-pruning-ID         |
+| environments            |
+| latex-learning          |
+| lyrn                    |
+| mysite-2.0              |
+| nn-sensitivity-research |
+| nord-gnome-terminal     |
+| playground              |
+| retraining-free-pruning |
+| testrsync               |
+| writing                 |
+
+** This is a header 
+:PROPERTIES:
+:header-args: dir /etc
+:END:
+#+begin_src shell 
+  ls -l
+#+end_src
+
+#+RESULTS:
+| total      | 12 |        |        |      |     |    |       |                                |
+| -rw-rw-r-- |  1 | zander | zander | 1403 | May | 23 | 19:43 | learn_literate_programming.org |
+| -rw-rw-r-- |  1 | zander | zander |   65 | Mar | 23 | 20:11 | README.md                      |
+| drwxrwxr-x |  5 | zander | zander | 4096 | Mar | 25 | 18:11 | spoj                           |
+
